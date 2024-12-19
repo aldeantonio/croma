@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cores Confusas</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .color-display {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .button {
+            width: 100px;
+            height: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .button:hover {
+            transform: scale(1.1);
+        }
+
+        .score {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .game-over {
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: red;
+        }
+
+        .high-score {
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: green;
+        }
+
+        .restart {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .restart:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="color-display">Cor: <span id="color-name">Verde</span></div>
+        <div class="buttons">
+            <button class="button" style="background-color: red; color: white;" onclick="checkColor('Vermelho')">Vermelho</button>
+            <button class="button" style="background-color: blue; color: white;" onclick="checkColor('Azul')">Azul</button>
+            <button class="button" style="background-color: green; color: white;" onclick="checkColor('Verde')">Verde</button>
+            <button class="button" style="background-color: yellow; color: black;" onclick="checkColor('Amarelo')">Amarelo</button>
+        </div>
+        <div class="score">Pontuação: <span id="score">0</span></div>
+        <div class="high-score">Melhor Pontuação: <span id="high-score">0</span></div>
+        <div class="game-over" id="game-over" style="display: none;">Fim de Jogo!</div>
+        <button class="restart" onclick="restartGame()">Reiniciar</button>
+    </div>
+
+    <script>
+        const colors = [
+            { name: 'Vermelho', color: 'red' },
+            { name: 'Azul', color: 'blue' },
+            { name: 'Verde', color: 'green' },
+            { name: 'Amarelo', color: 'yellow' }
+        ];
+
+        const colorDisplay = document.getElementById('color-name');
+        const scoreDisplay = document.getElementById('score');
+        const highScoreDisplay = document.getElementById('high-score');
+        const gameOverDisplay = document.getElementById('game-over');
+
+        let score = 0;
+        let correctColor = '';
+        let gameInterval;
+
+        // Load high score from localStorage
+        const loadHighScore = () => {
+            const highScore = localStorage.getItem('highScore') || 0;
+            highScoreDisplay.textContent = highScore;
+        };
+
+        // Save high score to localStorage
+        const saveHighScore = () => {
+            const highScore = parseInt(localStorage.getItem('highScore') || '0', 10);
+            if (score > highScore) {
+                localStorage.setItem('highScore', score);
+                highScoreDisplay.textContent = score;
+            }
+        };
+
+        function startGame() {
+            loadHighScore();
+            updateColor();
+        }
+
+        function updateColor() {
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            const displayColor = colors[Math.floor(Math.random() * colors.length)];
+
+            correctColor = randomColor.name;
+            colorDisplay.textContent = randomColor.name;
+            colorDisplay.style.color = displayColor.color;
+        }
+
+        function checkColor(selectedColor) {
+            if (selectedColor === correctColor) {
+                score++;
+                scoreDisplay.textContent = score;
+                updateColor();
+            } else {
+                endGame();
+            }
+        }
+
+        function endGame() {
+            saveHighScore();
+            gameOverDisplay.style.display = 'block';
+            colorDisplay.textContent = '';
+        }
+
+        function restartGame() {
+            score = 0;
+            scoreDisplay.textContent = score;
+            gameOverDisplay.style.display = 'none';
+            startGame();
+        }
+
+        startGame();
+    </script>
+</body>
+</html>
