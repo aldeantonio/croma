@@ -108,6 +108,112 @@
             { name: 'Verde', color: 'green' },
             { name: 'Amarelo', color: 'yellow' }
         ];
+    
+        const colorDisplay = document.getElementById('color-name');
+        const scoreDisplay = document.getElementById('score');
+        const highScoreDisplay = document.getElementById('high-score');
+        const gameOverDisplay = document.getElementById('game-over');
+    
+        let score = 0;
+        let correctColor = '';
+        let timer;
+        let timeLeft = 10; // Tempo em segundos
+        let timerDisplay;
+    
+        // Load high score from localStorage
+        const loadHighScore = () => {
+            const highScore = localStorage.getItem('highScore') || 0;
+            highScoreDisplay.textContent = highScore;
+        };
+    
+        // Save high score to localStorage
+        const saveHighScore = () => {
+            const highScore = parseInt(localStorage.getItem('highScore') || '0', 10);
+            if (score > highScore) {
+                localStorage.setItem('highScore', score);
+                highScoreDisplay.textContent = score;
+            }
+        };
+    
+        function startGame() {
+            loadHighScore();
+            updateColor();
+            startTimer();
+        }
+    
+        function updateColor() {
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            const displayColor = colors[Math.floor(Math.random() * colors.length)];
+    
+            correctColor = randomColor.name;
+            colorDisplay.textContent = randomColor.name;
+            colorDisplay.style.color = displayColor.color;
+            resetTimer();
+        }
+    
+        function checkColor(selectedColor) {
+            if (selectedColor === correctColor) {
+                score++;
+                scoreDisplay.textContent = score;
+                updateColor();
+            } else {
+                endGame();
+            }
+        }
+    
+        function endGame() {
+            saveHighScore();
+            gameOverDisplay.style.display = 'block';
+            colorDisplay.textContent = '';
+            clearInterval(timer);
+        }
+    
+        function restartGame() {
+            score = 0;
+            scoreDisplay.textContent = score;
+            gameOverDisplay.style.display = 'none';
+            timeLeft = 10;
+            startGame();
+        }
+    
+        function startTimer() {
+            timerDisplay = document.createElement("div");
+            timerDisplay.style.marginTop = "10px";
+            timerDisplay.style.fontSize = "18px";
+            timerDisplay.style.fontWeight = "bold";
+            timerDisplay.id = "timer";
+            document.querySelector(".container").appendChild(timerDisplay);
+            updateTimer();
+        }
+    
+        function updateTimer() {
+            timer = setInterval(() => {
+                if (timeLeft > 0) {
+                    timerDisplay.textContent = `Tempo restante: ${timeLeft--}s`;
+                } else {
+                    clearInterval(timer);
+                    endGame();
+                }
+            }, 1000);
+        }
+    
+        function resetTimer() {
+            clearInterval(timer);
+            timeLeft = 10;
+            updateTimer();
+        }
+    
+        startGame();
+    </script>
+    
+<!-- 
+    <script>
+        const colors = [
+            { name: 'Vermelho', color: 'red' },
+            { name: 'Azul', color: 'blue' },
+            { name: 'Verde', color: 'green' },
+            { name: 'Amarelo', color: 'yellow' }
+        ];
 
         const colorDisplay = document.getElementById('color-name');
         const scoreDisplay = document.getElementById('score');
@@ -171,6 +277,6 @@
         }
 
         startGame();
-    </script>
+    </script> -->
 </body>
 </html>
